@@ -1,9 +1,6 @@
 services:
   - type: web
-    name: engage-backend
-    runtime: python
-    buildCommand: pip install --no-cache-dir --prefer-binary -r requirements.txt
-    startCommand: gunicorn engage_backend.wsgi:application
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11
+    name: my-python-app
+    env: docker
+    plan: free
+    autoDeploy: true
