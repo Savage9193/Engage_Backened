@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: engage-backend
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn engage_backend.wsgi
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: engage_backend.settings

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Campaign Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            padding: 20px;
+        }
+        .email-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333333;
+        }
+        p {
+            font-size: 16px;
+            color: #555555;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <h1>Hello {{ customer_name }}</h1>
+        <p>We are excited to have you in our campaign: <strong>{{ campaign_id }}</strong>.</p>
+        <p>This is a sample email sent via our Django system using HTML content.</p>
+        <p>Thank you,<br>The Team</p>
+    </div>
+</body>
+</html>
