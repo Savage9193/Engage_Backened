@@ -2,8 +2,8 @@ services:
   - type: web
     name: engage-backend
     env: python
-    buildCommand: ""
-    startCommand: gunicorn engage_backend.wsgi
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn engage_backend.wsgi:application
     envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: engage_backend.settings
+      - key: PYTHON_VERSION
+        value: 3.11.9
