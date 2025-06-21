@@ -1,4 +1,3 @@
-engage_backend/settings.py
 *.pyc
 __pycache__/
 *.sqlite3
