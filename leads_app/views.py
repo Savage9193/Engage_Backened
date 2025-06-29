@@ -39,13 +39,31 @@ def approve_campaign(request, campaign_id):
     except Campaign.DoesNotExist:
         return Response({'error': 'Campaign not found'}, status=status.HTTP_404_NOT_FOUND)
 # leads_app/views.py
-from rest_framework import generics
+# from rest_framework import generics
+# from .models import Lead
+# from .serializers import LeadSerializer
+
+# class LeadListCreateView(generics.ListCreateAPIView):
+#     queryset = Lead.objects.all()
+#     serializer_class = LeadSerializer
+from rest_framework import generics, status
+from rest_framework.response import Response
 from .models import Lead
 from .serializers import LeadSerializer
 
 class LeadListCreateView(generics.ListCreateAPIView):
     queryset = Lead.objects.all()
     serializer_class = LeadSerializer
+
+    def create(self, request, *args, **kwargs):
+        if isinstance(request.data, list):
+            serializer = self.get_serializer(data=request.data, many=True)
+        else:
+            serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 from rest_framework.decorators import api_view
