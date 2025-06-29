@@ -18,7 +18,8 @@ class Campaign(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     checker = models.CharField(max_length=100, blank=True, null=True)
     reviewed_on = models.DateTimeField(blank=True, null=True)
-    template_id = models.ForeignKey('templates_app.Template', on_delete=models.SET_NULL, null=True, blank=True)
+    # template_id = models.CharField('templates_app.Template', on_delete=models.SET_NULL, null=True, blank=True)
+    template_id = models.CharField(max_length=100, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.campaign_id:
