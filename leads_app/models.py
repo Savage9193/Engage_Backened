@@ -9,7 +9,8 @@ STATUS_CHOICES = [
 ]
 
 class Campaign(models.Model):
-    campaign_id = models.CharField(max_length=10, primary_key=True, blank=True)  # No null=True for PK
+    campaign_id = models.CharField( max_length=10, unique=True) 
+    # campaign_id = models.CharField(max_length=10, primary_key=True, blank=True)  # No null=True for PK
     cust_id = models.CharField(max_length=100, blank=True, null=True)
     cust_email = models.EmailField(blank=True, null=True)
     customer_name = models.CharField(max_length=100, blank=True, null=True)
@@ -18,7 +19,7 @@ class Campaign(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     checker = models.CharField(max_length=100, blank=True, null=True)
     reviewed_on = models.DateTimeField(blank=True, null=True)
-    template_id = models.CharField(max_length=100, blank=True, null=True)  # Changed from ForeignKey to CharField
+    template_id = models.ForeignKey('templates_app.Template', on_delete=models.SET_NULL, null=True, blank=True)  # Changed from ForeignKey to CharField
 
     def save(self, *args, **kwargs):
         if not self.campaign_id:
@@ -33,7 +34,7 @@ class Campaign(models.Model):
         return f"{self.campaign_id} - {self.customer_name}"
 
 class Lead(models.Model):
-    campaign = models.CharField(max_length=10)  # Changed from ForeignKey to CharField
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='leads')
     name = models.CharField(max_length=100)
     email = models.EmailField()
 
