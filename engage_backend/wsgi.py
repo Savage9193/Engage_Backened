@@ -20,7 +20,3 @@ if os.environ.get("CREATE_SUPERUSER_ON_STARTUP") == "1":
     User = get_user_model()
     if not User.objects.filter(username="admin").exists():
         User.objects.create_superuser("admin", "test@example.com", "Test@1234")
-import os
-db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'db.sqlite3')
-if os.path.exists(db_path):
-    os.remove(db_path)
