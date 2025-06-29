@@ -57,4 +57,4 @@ COPY . .
 EXPOSE 8000
 
 # Run migrations + start server when container starts (not during build)
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn engage_ai.wsgi:application --bind 0.0.0.0:$PORT"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn engage_backend.wsgi:application --bind 0.0.0.0:$PORT"]
