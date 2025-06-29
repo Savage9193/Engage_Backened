@@ -18,7 +18,7 @@ class Campaign(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     checker = models.CharField(max_length=100, blank=True, null=True)
     reviewed_on = models.DateTimeField(blank=True, null=True)
-    template_id = models.ForeignKey('templates_app.Template', on_delete=models.SET_NULL, null=True, blank=True)
+    template_id = models.CharField(max_length=100, blank=True, null=True)  # Changed from ForeignKey to CharField
 
     def save(self, *args, **kwargs):
         if not self.campaign_id:
@@ -31,8 +31,9 @@ class Campaign(models.Model):
 
     def __str__(self):
         return f"{self.campaign_id} - {self.customer_name}"
+
 class Lead(models.Model):
-    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='leads')
+    campaign = models.CharField(max_length=10)  # Changed from ForeignKey to CharField
     name = models.CharField(max_length=100)
     email = models.EmailField()
 
