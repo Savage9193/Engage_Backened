@@ -37,6 +37,21 @@ SECRET_KEY = "django-insecure-7+2=#qr4fkrn1-=5cqb1)0#gmc4f0v8n&hqw!@l1$6f8y9a9c3
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']  # OR your render domain when 
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
 
 
 # Application definition
