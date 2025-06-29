@@ -15,6 +15,9 @@ WORKDIR /app
 
 # Copy all project files
 COPY . .
+# Run migrations and collect static
+RUN python manage.py migrate --noinput
+RUN python manage.py collectstatic --noinput
 
 # Upgrade pip & install dependencies
 RUN pip install --upgrade pip
