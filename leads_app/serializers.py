@@ -8,6 +8,10 @@ class CampaignSerializer(serializers.ModelSerializer):
         model = Campaign
         fields = '__all__'  # Or list them explicitly if you want more control
 class LeadSerializer(serializers.ModelSerializer):
+    campaign = serializers.SlugRelatedField(
+        slug_field='campaign_id',
+        queryset=Campaign.objects.all()
+    )
     class Meta:
         model = Lead
         fields = '__all__'
