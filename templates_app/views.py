@@ -4,22 +4,18 @@ from .models import Template
 from .serializers import TemplateSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 class TemplateListCreateView(generics.ListCreateAPIView):
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
-    # def perform_create(self, serializer):
-    #     # Generate template ID dynamically (e.g., ET0001, ET0002, etc.)
-    #     last_template = Template.objects.order_by('-template_id').first()
-    #     if last_template:
-    #         last_id = int(last_template.template_id.replace("ET", ""))
-    #         new_id = f"ET{last_id + 1:04d}"
-    #     else:
-    #         new_id = "ET0001"
 
-    #     serializer.save(template_id=new_id)
+# class TemplateListCreateView(generics.ListCreateAPIView):
+#     queryset = Template.objects.all()
+#     serializer_class = TemplateSerializer
+#     parser_classes = (MultiPartParser, FormParser)
 
 from rest_framework.response import Response
 from rest_framework import status

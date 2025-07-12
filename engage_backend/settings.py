@@ -35,8 +35,9 @@ SECRET_KEY = "django-insecure-7+2=#qr4fkrn1-=5cqb1)0#gmc4f0v8n&hqw!@l1$6f8y9a9c3
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+ALLOWED_HOSTS = ['*']  # Use your domain name here if you have one, e.g., 'yourdomain.com'
 
-ALLOWED_HOSTS = ['*']  # OR your render domain when 
+# OR your render domain when 
 import os
 
 LOGGING = {
