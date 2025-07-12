@@ -26,8 +26,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'tyagishahvez551@gmail.com'  # Replace with your email
-# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_HOST_PASSWORD = 'qhuc yrgs vypx hjnr'  # Replace with your email password
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# EMAIL_HOST_PASSWORD = 'qhuc yrgs vypx hjnr'  # Replace with your email password
 
 
 
