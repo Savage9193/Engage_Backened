@@ -30,4 +30,5 @@ RUN mkdir -p /app/media
 COPY ./media /app/media
 
 # Run migrations + start server when container starts (not during build)
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn engage_backend.wsgi:application --bind 0.0.0.0:$PORT"]
+# CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn engage_backend.wsgi:application --bind 0.0.0.0:$PORT"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py shell < engage_backend/create_superuser.py && python manage.py collectstatic --noinput && gunicorn engage_backend.wsgi:application --bind 0.0.0.0:${PORT}"]
