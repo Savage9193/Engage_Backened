@@ -28,6 +28,7 @@ urlpatterns = [
     path('templates/', include('templates_app.urls')),
     path('sendEmail/', include('emails_app.urls')),
     path('api/', include('leads_app.urls')),
+    path('api/', include('customer_app.urls')),
 ]
 
 # ✅ Serve media files during development
