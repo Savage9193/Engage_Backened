@@ -3,6 +3,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Customer
 from .serializers import CustomerSerializer
+from rest_framework.views import APIView
 
 # Create your views here.
 
@@ -33,4 +34,14 @@ class CustomerRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         super().destroy(request, *args, **kwargs)
         return Response({
             'message': 'Customer deleted successfully'
+        }, status=status.HTTP_200_OK)
+
+class CustomerFilterView(APIView):
+    def post(self, request, *args, **kwargs):
+        filters = request.data
+        queryset = Customer.objects.filter(**filters)
+        serializer = CustomerSerializer(queryset, many=True)
+        return Response({
+            'message': 'Filtered customers fetched successfully',
+            'data': serializer.data
         }, status=status.HTTP_200_OK)
