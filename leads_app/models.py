@@ -45,6 +45,9 @@ import uuid
 from django.db import models
 import random
 
+def generate_campaign_id():
+    return f'CM{random.randint(10000, 99999)}'
+
 STATUS_CHOICES = [
     ('Pending Checker', 'Pending Checker'),
     ('Approved', 'Approved'),
@@ -52,16 +55,8 @@ STATUS_CHOICES = [
     ('Processed', 'Processed'),
 ]
 
-def generate_campaign_id():
-    import random
-    from leads_app.models import Campaign
-    while True:
-        new_id = f"CM{random.randint(100000, 999999)}"
-        if not Campaign.objects.filter(campaign_id=new_id).exists():
-            return new_id
-
 class Campaign(models.Model):
-    campaign_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    campaign_id = models.CharField(primary_key=True, max_length=20, default=generate_campaign_id, editable=False)
     created_by = models.CharField(max_length=100, default='system')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending Checker')
     created_on = models.DateTimeField(auto_now_add=True)
