@@ -15,6 +15,5 @@ class Template(models.Model):
 
     def __str__(self):
         return self.template_id
-html_file = models.FileField(upload_to='templates/', blank=True, null=True)
 
     
