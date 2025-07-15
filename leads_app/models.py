@@ -1,6 +1,9 @@
 # from django.db import models
 # import random
 import uuid
+from django.db import models
+import random
+from bson import ObjectId
 
 # STATUS_CHOICES = [
 #     ('Pending Checker', 'Pending Checker'),
@@ -42,9 +45,6 @@ import uuid
 #     def __str__(self):
 #         return self.email
 
-from django.db import models
-import random
-
 def generate_campaign_id():
     return f'CM{random.randint(10000, 99999)}'
 
@@ -67,7 +67,11 @@ class Campaign(models.Model):
     def __str__(self):
         return f"{self.campaign_id}"
 
+def generate_lead_id():
+    return str(ObjectId())
+
 class Lead(models.Model):
+    lead_id = models.CharField(primary_key=True, max_length=24, default=generate_lead_id, editable=False)
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE, related_name='leads')
     name = models.CharField(max_length=100)
     email = models.EmailField()
