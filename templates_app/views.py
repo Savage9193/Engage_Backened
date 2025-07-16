@@ -5,6 +5,7 @@ from .serializers import TemplateSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.generics import DestroyAPIView, UpdateAPIView
 
 class TemplateListCreateView(generics.ListCreateAPIView):
     queryset = Template.objects.all()
@@ -62,3 +63,21 @@ class SendEmailView(APIView):
             return Response({"message": "Email sent successfully!"}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class TemplateEditView(UpdateAPIView):
+    queryset = Template.objects.all()
+    serializer_class = TemplateSerializer
+    lookup_field = 'template_id'
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        # Prevent template_id from being updated
+        data = request.data.copy()
+        data.pop('template_id', None)
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response({"message": "Template updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)

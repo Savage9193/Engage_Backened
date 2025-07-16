@@ -5,6 +5,7 @@ class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Template
         fields = '__all__'
+        read_only_fields = ('template_id',)
 
     def validate_template_id(self, value):
         if Template.objects.filter(template_id=value).exists():
