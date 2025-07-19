@@ -5,15 +5,66 @@ from .models import Customer
 from .serializers import CustomerSerializer
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.pagination import PageNumberPagination
+from django.core.paginator import Paginator
 import pandas as pd
 import io
 from django.db import transaction
 
-# Create your views here.
+# Create your models here.
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+    page_query_param = 'page'
 
 class CustomerListCreateView(generics.ListCreateAPIView):
-    queryset = Customer.objects.all()
+    queryset = Customer.objects.all().order_by('-id')  # Order by newest first
     serializer_class = CustomerSerializer
+    pagination_class = CustomPagination
+
+    def list(self, request, *args, **kwargs):
+        # Get query parameters
+        page = request.query_params.get('page', 1)
+        page_size = request.query_params.get('page_size', 10)
+        
+        # Validate page_size
+        try:
+            page_size = int(page_size)
+            if page_size < 1 or page_size > 100:
+                page_size = 10
+        except ValueError:
+            page_size = 10
+        
+        # Get queryset
+        queryset = self.get_queryset()
+        
+        # Apply pagination
+        paginator = Paginator(queryset, page_size)
+        
+        try:
+            page_obj = paginator.page(page)
+        except:
+            page_obj = paginator.page(1)
+        
+        # Serialize data
+        serializer = self.get_serializer(page_obj.object_list, many=True)
+        
+        return Response({
+            'message': 'Customers fetched successfully',
+            'data': serializer.data,
+            'pagination': {
+                'current_page': page_obj.number,
+                'total_pages': paginator.num_pages,
+                'total_records': paginator.count,
+                'page_size': page_size,
+                'has_next': page_obj.has_next(),
+                'has_previous': page_obj.has_previous(),
+                'next_page': page_obj.next_page_number() if page_obj.has_next() else None,
+                'previous_page': page_obj.previous_page_number() if page_obj.has_previous() else None,
+            }
+        }, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -42,12 +93,68 @@ class CustomerRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 class CustomerFilterView(APIView):
     def post(self, request, *args, **kwargs):
-        filters = request.data
-        queryset = Customer.objects.filter(**filters)
-        serializer = CustomerSerializer(queryset, many=True)
+        filters = request.data.get('filters', {})
+        page = request.data.get('page', 1)
+        page_size = request.data.get('page_size', 10)
+        
+        # Validate page_size
+        try:
+            page_size = int(page_size)
+            if page_size < 1 or page_size > 100:
+                page_size = 10
+        except ValueError:
+            page_size = 10
+        
+        # Apply filters
+        queryset = Customer.objects.all().order_by('-id')
+        
+        if filters:
+            # Handle special cases for filtering
+            filter_kwargs = {}
+            for key, value in filters.items():
+                if value:  # Only apply non-empty filters
+                    if key in ['year', 'final_date', 'annual_income', 'loan_amount']:
+                        # Integer fields
+                        try:
+                            filter_kwargs[key] = int(value)
+                        except (ValueError, TypeError):
+                            continue
+                    elif key in ['employment_length', 'interest_rate', 'debt_to_income_ratio', 'total_payment', 'total_principle_to_recover', 'total_recoveries', 'installment']:
+                        # Float fields
+                        try:
+                            filter_kwargs[key] = float(value)
+                        except (ValueError, TypeError):
+                            continue
+                    else:
+                        # String fields - use icontains for partial matching
+                        filter_kwargs[f'{key}__icontains'] = value
+            
+            queryset = queryset.filter(**filter_kwargs)
+        
+        # Apply pagination
+        paginator = Paginator(queryset, page_size)
+        
+        try:
+            page_obj = paginator.page(page)
+        except:
+            page_obj = paginator.page(1)
+        
+        # Serialize data
+        serializer = CustomerSerializer(page_obj.object_list, many=True)
+        
         return Response({
             'message': 'Filtered customers fetched successfully',
-            'data': serializer.data
+            'data': serializer.data,
+            'pagination': {
+                'current_page': page_obj.number,
+                'total_pages': paginator.num_pages,
+                'total_records': paginator.count,
+                'page_size': page_size,
+                'has_next': page_obj.has_next(),
+                'has_previous': page_obj.has_previous(),
+                'next_page': page_obj.next_page_number() if page_obj.has_next() else None,
+                'previous_page': page_obj.previous_page_number() if page_obj.has_previous() else None,
+            }
         }, status=status.HTTP_200_OK)
 
 class CustomerExcelUploadView(APIView):
