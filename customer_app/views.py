@@ -236,8 +236,34 @@ class CustomerExcelUploadView(APIView):
                         errors.append(f"Row {index + 1}: {str(e)}")
                         continue
             
+            # Determine the appropriate message based on results
+            if created_count == 0 and error_count > 0:
+                if all('already exists' in error for error in errors):
+                    message = f'All {error_count} customers already exist in the system. No new customers were added.'
+                else:
+                    message = f'No new customers were created. {error_count} errors encountered.'
+            elif created_count > 0 and error_count > 0:
+                # Check how many errors are duplicates
+                duplicate_errors = [error for error in errors if 'already exists' in error]
+                duplicate_count = len(duplicate_errors)
+                other_errors_count = error_count - duplicate_count
+                
+                if duplicate_count > 0 and other_errors_count == 0:
+                    # All errors are duplicates
+                    message = f'Successfully added {created_count} new customer(s). {duplicate_count} customer(s) were skipped as they already exist.'
+                elif duplicate_count > 0 and other_errors_count > 0:
+                    # Mixed errors - some duplicates, some other issues
+                    message = f'Successfully added {created_count} new customer(s). {duplicate_count} customer(s) were skipped as duplicates, {other_errors_count} entries had other issues.'
+                else:
+                    # No duplicates, only other errors
+                    message = f'Successfully added {created_count} new customer(s). {error_count} entries had issues.'
+            elif created_count > 0 and error_count == 0:
+                message = f'Successfully imported {created_count} customer(s) from Excel file.'
+            else:
+                message = 'Excel file processed but no customers were created.'
+            
             return Response({
-                'message': 'Excel file processed successfully',
+                'message': message,
                 'created_count': created_count,
                 'error_count': error_count,
                 'errors': errors[:10] if errors else []  # Limit error messages
